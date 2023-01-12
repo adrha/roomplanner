@@ -1,0 +1,26 @@
+tls:
+  options:
+    default:
+      minVersion: VersionTLS12
+
+http:
+  middlewares:
+    httpsRedirect:
+      redirectScheme:
+        scheme: https
+        permanent: true
+
+  routers:
+    httpsRedirect:
+      entryPoints:
+        - http
+      middlewares:
+        - httpsRedirect
+      rule: "HostRegexp(`{host:.+}`)"
+      service: noop
+
+  services:
+    noop:
+      loadBalancer:
+        servers:
+          - url "http://192.168.0.1"

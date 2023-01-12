@@ -1,0 +1,17 @@
+﻿@page
+@model RoomPlanner.App.Pages.Rooms.IndexModel
+@{
+    ViewData["Title"] = "Rooms";
+}
+@{
+    foreach(var room in Model.Rooms)
+    {
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <h5 class="card-title"><a>@room.Name</a></h5>
+            <h6 class="card-subtitle mb-2 text-muted">Floor: @room.Floor</h6>
+            <p class="card-text">@room.Building</p>
+          </div>
+        </div>
+    }
+}

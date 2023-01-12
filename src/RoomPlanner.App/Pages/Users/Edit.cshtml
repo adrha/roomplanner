@@ -1,0 +1,76 @@
+﻿@page "{userId}"
+@using RoomPlanner.Infrastructure.Dbo
+@using RoomPlanner.Core
+
+@inject UserManager<RoomPlannerIdentityUserDbo> UserManager;
+
+@model RoomPlanner.App.Pages.Users.EditModel
+@{
+    ViewData["Title"] = "Edit user";
+    var currentUser = await UserManager.GetUserAsync(User);
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <form id="editForm" method="post">
+             @if (Model.ModelState.ErrorCount > 0)
+            {
+                <div style="margin-top:15px" class="alert alert-danger" role="alert">
+                    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                </div>
+            }
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-floating">
+                <input asp-for="Input.FirstName" class="form-control" autocomplete="name" aria-required="true" />
+                <label asp-for="Input.FirstName"></label>
+                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-floating">
+                <input asp-for="Input.LastName" class="form-control" autocomplete="lastname" aria-required="true" />
+                <label asp-for="Input.LastName"></label>
+                <span asp-validation-for="Input.LastName" class="text-danger"></span>
+            </div>
+            <div class="form-floating">
+                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
+                <label asp-for="Input.Email"></label>
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+            <div class="form-floating">
+                <input asp-for="Input.PhoneNumber" class="form-control" autocomplete="tel" aria-required="true" />
+                <label asp-for="Input.PhoneNumber"></label>
+                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+            </div>
+            <br />
+
+            <label>Roles:</label>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" asp-for="Input.BookRole" id="bookRole">
+                <label class="form-check-label" for="flexCheckDefault">
+                    Book
+                </label>
+            </div>
+
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" asp-for="Input.CleanPlanRole" id="cleanRole">
+                <label class="form-check-label" for="flexCheckDefault">
+                    Clean
+                </label>
+            </div>
+
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" asp-for="Input.AdminRole" id="adminRole">
+                <label class="form-check-label" for="flexCheckDefault">
+                    Admin
+                </label>
+            </div>
+
+            <br />
+
+            <button id="saveSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+<partial name="_ValidationScriptsPartial" />
+}

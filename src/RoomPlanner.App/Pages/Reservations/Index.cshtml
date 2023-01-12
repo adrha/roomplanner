@@ -1,0 +1,94 @@
+﻿@page
+@model RoomPlanner.App.Pages.Reservations.IndexModel
+@{
+    ViewData["Title"] = "Reservations";
+}
+
+
+<link rel="stylesheet" href="~/css/timetablejs.css" asp-append-version="true" />
+
+<form method="get" id="dateForm">
+    <div class="row">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">Date: </span>
+            </div>
+            <input type="text" class="form-control datetimepicker-input" data-toggle="datetimepicker"  data-target="#datepicker" id="datepicker" asp-for="@Model.Date">
+        </div>
+    </div>
+    <br />
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="timeTableView" id="option-office-hrs" value="officehrs" asp-for="@Model.TimeTableView" onclick="setTimeTableScope()" checked>
+        <label class="form-check-label">
+            Office hours
+        </label>
+    </div>
+
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="timeTableView" id="option-24-hrs" value="24hrs" asp-for="@Model.TimeTableView" onclick="setTimeTableScope()">
+        <label class="form-check-label">
+            24h
+        </label>
+    </div>
+</form>
+<div class="timetable"></div>
+
+
+@section Scripts {
+<script src="~/js/timetable.js" asp-append-version="true"></script>
+<script src="~/js/bootstrap-datepicker.js"></script>
+
+
+<script>
+
+    var rooms = @Html.Raw(Json.Serialize(@Model.Rooms));
+    var reservations = @Html.Raw(Json.Serialize(@Model.RoomReservations))
+    var allowedToBook = '@Html.Raw(@Model.IsAllowedToBook)';
+    var selectedDate = new moment('@Html.Raw(@Model.Date.ToString("o", System.Globalization.CultureInfo.InvariantCulture))');
+
+    function setTimeTableScope(){
+        var timetable = new Timetable();
+        var timetableLocations = [];
+
+        if(document.getElementById('option-24-hrs').checked)
+        {
+            timetable.setScope(0,24, selectedDate);
+        }
+        else{
+            timetable.setScope(7,18, selectedDate);
+        }
+
+        rooms.forEach(item => {
+            var bookUrl = allowedToBook === 'True' ? "/Reservations/Create?RoomId="+item.id+"&Date=2022-04-03" : undefined;
+            timetableLocations.push({ id : item.id, title : item.name, actionUrl : bookUrl});
+        });
+
+        timetable.addLocations(timetableLocations);
+
+        reservations.forEach(item => {
+            var from = new Date(item.from);
+            var to = new Date(item.to);
+
+            timetable.addEvent(item.subject, item.room.id, from, to, { url: '/Reservations/Edit/'+item.id });
+        });
+
+        var renderer = new Timetable.Renderer(timetable);
+        renderer.draw('.timetable');
+    }
+
+    $('#datepicker').datetimepicker({
+                 format: 'DD.MM.yyyy'
+             });
+
+    $('#datepicker')
+    .on("change.datetimepicker", function(){
+        document.getElementById('dateForm').submit();
+    });
+
+
+    $(document).ready(function () {
+        setTimeTableScope();
+    });
+
+</script>
+}

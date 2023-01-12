@@ -1,0 +1,74 @@
+version: '3.5'
+
+services:
+  app:
+    image: docker-registry-sample.com:${IMAGE_VERSION?error}
+    container_name: roomplanner-app
+    restart: always
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__DefaultConnection: ${DB_CONNECTION_STRING}
+      SmtpServer__UserName: ${SMTP_USERNAME}
+      SmtpServer__Password: ${SMTP_PASSWORD}
+    networks:
+      - roomplanner_internal
+      - traefik_bridge
+    labels:
+      traefik.enable: true
+      traefik.http.routers.web.rule: "Host(`sample-domain.switzerlandnorth.cloudapp.azure.com`)"
+      traefik.http.routers.web.entrypoints: "https"
+      traefik.http.routers.web.tls.certresolver: "default"
+      traefik.http.routers.web.tls.options: "default@file"
+      traefik.docker.network: "traefik_bridge"
+      traefik.port: "80"
+    volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - /etc/timezone:/etc/timezone:ro
+    
+
+  db:
+    image: mariadb:10.7
+    container_name: roomplanner-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PW?error}
+      MYSQL_DATABASE: roomplanner
+      MYSQL_USER: ${DB_USER?error}
+      MYSQL_PASSWORD: ${DB_PWD?error}
+    networks:
+      - roomplanner_internal
+    volumes:
+      - dbdata:/var/lib/mysql
+    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--explicit_defaults_for_timestamp', '--transaction-isolation=READ-COMMITTED']
+
+
+  traefik:
+    image: traefik:latest
+    hostname: roomplanner-traefik
+    container_name: roomplanner-traefik
+    restart: unless-stopped
+    ports:
+        - "80:80"     # The HTTP port
+        - "443:443"   # The HTTPS port
+    volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - /etc/timezone:/etc/timezone:ro
+        - /var/run/docker.sock:/var/run/docker.sock:ro
+        - ./certs:/certs
+        - ./traefik:/etc/traefik
+    networks:
+        - traefik_bridge
+
+
+volumes:
+  dbdata:
+    name: roomplanner-db
+
+
+networks:
+  traefik_bridge:
+    external:
+      name: traefik_bridge
+
+  roomplanner_internal:
+    internal: true

@@ -1,0 +1,22 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome to the RoomPlanner</h1>
+    <br/>
+    <h3>You are beeing redirected to the reservation-plan.</h3>
+    <div style="margin-top:30px" class="spinner-border text-primary" role="status">
+      <span class="sr-only" style="height:70px">Loading...</span>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        setTimeout(function () {
+            window.open('/Reservations', '_self');
+        }, 1000);
+    </script>
+}

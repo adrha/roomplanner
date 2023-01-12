@@ -1,0 +1,49 @@
+﻿@page
+@model RoomPlanner.App.Areas.Identity.Pages.Account.CreateAccountModel
+@{
+    ViewData["Title"] = "Activate your account";
+}
+
+<h1>@ViewData["Title"]</h1>
+<h2>Your RoomPlanner account.</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th scope="col">Name:</th>
+                    <td>@Model.Name</td>
+                </tr>
+                <tr>
+                    <th scope="col">Lastname:</th>
+                    <td>@Model.Lastname</td>
+                </tr>
+                <tr>
+                    <th scope="col">Email:</th>
+                    <td>@Model.Email</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input asp-for="Input.Code" type="hidden" />
+            <div class="form-floating">
+                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" />
+                <label asp-for="Input.Password" class="form-label"></label>
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+            <div class="form-floating">
+                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" />
+                <label asp-for="Input.ConfirmPassword" class="form-label"></label>
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            </div>
+            <button type="submit" class="w-100 btn btn-lg btn-primary">Activate</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

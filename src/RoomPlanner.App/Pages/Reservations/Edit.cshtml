@@ -1,0 +1,120 @@
+﻿@page "{reservationId}"
+@model RoomPlanner.App.Pages.Reservation.EditModel
+@{
+    ViewData["Title"] = "Edit reservation";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        @if (Model.IsOwner)
+        {
+            <form method="post">
+                @if (Model.RoomUnavailableInPeriod)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        Selected room is not available in this period.<br>
+                        Select another room or use the <a href="/Reservations">timetable</a> to search for a room.
+                    </div>
+                }
+
+                <div class="form-group">
+                    <label asp-for="Input.RoomId"></label>*
+                    <select asp-for="Input.RoomId" class="form-control form-select">
+                        @foreach (var room in Model.Rooms)
+                        {
+                            if (room.Id == Model.Input.RoomId)
+                            {
+                                <option value="@room.Id" selected>@room.Building // @room.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@room.Id">@room.Building // @room.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group date">
+                    <label asp-for="Input.From"></label>*
+                    <input type="text" asp-for="Input.From" class="form-control datetimepicker-input" data-toggle="datetimepicker" data-target="#datepicker-from" id="datepicker-from">
+                    <span asp-validation-for="Input.From" class="text-danger"></span>
+                </div>
+
+                <div class="form-group date">
+                    <label asp-for="Input.To"></label>*
+                    <input type="text" asp-for="Input.To" class="form-control datetimepicker-input" data-toggle="datetimepicker" data-target="#datepicker-to" id="datepicker-to">
+                    <span asp-validation-for="Input.To" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Input.Subject"></label>*
+                    <input asp-for="Input.Subject" class="form-control">
+                    <span asp-validation-for="Input.Subject" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <b>Booked:</b> @Model.ReservationUser.FirstName @Model.ReservationUser.LastName   <a href="mailto:@Model.ReservationUser.Email">@Model.ReservationUser.Email</a>
+                </div>
+
+                @if (Model.ModelState.ErrorCount > 0)
+                {
+                    <div style="margin-top:15px" class="alert alert-danger" role="alert">
+                        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                    </div>
+                }
+
+                <button type="submit" class="btn btn-primary float-right" asp-page-handler="change">Save</button>
+                <button type="submit" class="btn btn-danger float-right" asp-page-handler="delete">Delete</button>
+            </form>
+        }
+        else
+        {
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th scope="col">Subject:</th>
+                        <td>@Model.Input.Subject</td>
+                    </tr>
+                    <tr>
+                        <th scope="col">Room:</th>
+                        @{
+                            var room = Model.Rooms.Single(r => r.Id == Model.Input.RoomId);
+                            <td><b>@room.Name</b>  @room.Building</td>
+                        }                        
+                    </tr>
+                    <tr>
+                        <th scope="col">From:</th>
+                        <td>@Model.Input.From</td>
+                    </tr>
+                    <tr>
+                        <th scope="col">To:</th>
+                        <td>@Model.Input.To</td>
+                    </tr>
+                    <tr></tr>
+                    <tr>
+                        <th scope="col">Booked:</th>
+                        <td><b>@Model.ReservationUser.FirstName @Model.ReservationUser.LastName</b>   <a href="mailto:@Model.ReservationUser.Email">@Model.ReservationUser.Email</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+
+
+@section Scripts
+{
+<script>
+    $(function () {
+         $('#datepicker-from').datetimepicker({
+             format: 'DD.MM.yyyy, HH:mm',
+             sideBySide: true
+         });
+         $('#datepicker-to').datetimepicker({
+               format: 'DD.MM.yyyy, HH:mm',
+               sideBySide: true
+         });
+     });
+</script>
+}

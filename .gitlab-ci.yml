@@ -1,0 +1,62 @@
+variables:
+    containerVersion: $CI_COMMIT_SHORT_SHA-$CI_PIPELINE_IID
+    projectName: roomplanner
+
+stages:
+    - test
+    - package
+    - deploy_az_stage
+
+unit_testing:
+    stage: test
+    image: mcr.microsoft.com/dotnet/sdk:6.0
+    script:
+    - "cd test/UnitTests"
+    - "dotnet restore"
+    - 'dotnet test --logger "junit;LogFilePath=./TestResults/RoomPlanner.Unittest.xml;MethodFormat=Class;FailureBodyFormat=Verbose"'
+    artifacts:
+        when: always
+        expire_in: 1 month
+        paths:
+            - test/UnitTests/TestResults/RoomPlanner.Unittest.xml
+        reports:
+            junit:
+                - test/UnitTests/TestResults/RoomPlanner.Unittest.xml
+
+functional_testing:
+    stage: test
+    image: mcr.microsoft.com/dotnet/sdk:6.0
+    script:
+    - "cd test/FunctionalTests"
+    - "dotnet restore"
+    - 'dotnet test --logger "junit;LogFilePath=./TestResults/RoomPlanner.Functionaltests.xml;MethodFormat=Class;FailureBodyFormat=Verbose"'
+    artifacts:
+        when: always
+        expire_in: 1 month
+        paths:
+            - test/FunctionalTests/TestResults/RoomPlanner.Functionaltests.xml
+        reports:
+            junit:
+                - test/FunctionalTests/TestResults/RoomPlanner.Functionaltests.xml
+
+package:
+    stage: package
+    image: docker:latest
+    services:
+        - docker:dind
+    before_script:
+        - echo $CI_REGISTRY
+        - echo $CI_JOB_TOKEN | docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+        - cd src
+    script:
+        - docker build --pull --build-arg version_variable=$containerVersion -f ./RoomPlanner.App/Dockerfile -t $CI_REGISTRY_IMAGE:$containerVersion .
+        - |-
+            if [ "$CI_COMMIT_BRANCH" = "$CI_DEFAULT_BRANCH" ]
+            then
+            docker tag $CI_REGISTRY_IMAGE:$containerVersion $CI_REGISTRY_IMAGE:latest
+            docker push $CI_REGISTRY_IMAGE:$containerVersion
+            docker push $CI_REGISTRY_IMAGE:latest
+            else
+            docker tag $CI_REGISTRY_IMAGE:$containerVersion $CI_REGISTRY_IMAGE:$containerVersion
+            docker push $CI_REGISTRY_IMAGE:$containerVersion
+            fi

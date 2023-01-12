@@ -1,0 +1,27 @@
+﻿@page
+@model RoomPlanner.App.Areas.Identity.Pages.Account.CreateAccountSuccessModel
+@{
+    ViewData["Title"] = "Account created";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h2 class="">Your account has been created!</h2>
+<div>
+    <div class="spinner-border text-primary" style="float:left" role="status">    
+  <span class="sr-only">Loading...</span>
+</div><h4 style="margin-left:20px">You are beeing redirected to the login-page.</h4>
+</div>
+
+<br/>
+<br/>
+
+<p><img height=300 src="~/img/success.gif" /></p>
+
+@section Scripts{
+    <script>
+        setTimeout(function () {
+            window.open('/Identity/Account/Login', '_self');
+        }, 4000);
+    </script>
+}

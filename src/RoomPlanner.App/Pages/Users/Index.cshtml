@@ -1,0 +1,47 @@
+﻿@page
+@model RoomPlanner.App.Pages.Users.IndexModel
+@{
+    ViewData["Title"] = "Users";
+}
+
+<div class="row">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Lastname</th>
+                <th scope="col">E-Mail</th>
+                <th scope="col">Roles</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var user in Model.Users)
+            {
+                <tr>
+                    <td>@user.FirstName</td>
+                    <td>@user.LastName</td>
+                    <td>@user.Email</td>
+                    <td>
+                        @if (Model.BookingUsers.Contains(user.Id))
+                        {
+                            <span class="badge badge-role bg-primary">Book</span>
+                        }
+                        @if (Model.CleaningUsers.Contains(user.Id))
+                        {
+                            <span class="badge badge-role bg-info text-dark">Clean</span>
+                        }
+                        @if (Model.AdminUsers.Contains(user.Id))
+                        {
+                            <span class="badge badge-role bg-warning text-dark">Admin</span>
+                        }
+                    </td>
+                    <td>
+                        <a class="btn btn-primary btn-sm" href="/Users/Edit/@user.Id" role="button">Edit</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <a class="btn btn-primary btn-sm" asp-area="Identity" asp-page="/Account/Register">Create user</a>
+</div>

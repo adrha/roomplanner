@@ -1,0 +1,22 @@
+version: '3.5'
+
+services:
+  db:
+    image: mariadb:10.7
+    container_name: roomplanner-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: roomPlannerR00T!
+      MYSQL_DATABASE: roomplanner
+      MYSQL_USER: roomplanner
+      MYSQL_PASSWORD: roomplanner-appPW
+    ports:
+      - 5508:3306
+    volumes:
+      - roomplanner-db-data:/var/lib/mysql
+    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--explicit_defaults_for_timestamp', '--transaction-isolation=READ-COMMITTED']
+
+volumes:
+  roomplanner-db-data:
+    name: roomplanner-db
+
