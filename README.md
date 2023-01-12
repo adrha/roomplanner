@@ -26,11 +26,10 @@ The `RoomPlanner` was part of a project in the **CAS Agile Software Engineering*
 - limited responsiveness for mobile devices
 - rooms can only be added directly on the database in this MVP
 
-## State diagram
+## Design
 ![State diagram](img/StateDiagram.png)
 
-## Architecture
-![Layered architecture](img/LayeredArchitecture.png)
+Architecture            |  Context
+:-------------------------:|:-------------------------:
+![Layered architecture](img/LayeredArchitecture.png)  |  ![Context diagram](img/ContextualDiagram.png)
 
-## Context
-![Context diagram](img/ContextualDiagram.png)
