@@ -151,7 +151,9 @@ namespace RoomPlanner.App
                 {
                     UserName = mail,
                     Email = mail,
-                    EmailConfirmed = true
+                    EmailConfirmed = true,
+                    FirstName = "Admin",
+                    LastName = "Admin"
                 };
 
                 IdentityResult result = await userManager.CreateAsync(user, pwd);
