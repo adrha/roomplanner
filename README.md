@@ -4,7 +4,7 @@ The `RoomPlanner` was part of the integration project in the **CAS Agile Softwar
 ![RoomPlanner Mockups](img/RoomPlanner.png)
 
 ## License information
-Source code licensed unser **GPL-3.0**.
+Source code licensed under **GPL-3.0**.
 - html mail templates by André Lergier [lergier.ch](https://lergier.ch)
 - timetable view by Grible [timetable.js repo](https://github.com/Grible/timetable.js)
 
